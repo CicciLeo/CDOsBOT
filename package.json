@@ -1,0 +1,13 @@
+{
+  "name": "CDosBOT",
+  "version": "0.0.1",
+  "description": "Telegram BOT for CDOS Groups",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "repository": {},
+  "dependencies": {
+    "telegraf": "^3.34.1"
+  }
+}
