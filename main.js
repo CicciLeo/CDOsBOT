@@ -3,6 +3,7 @@ const Telegraf = require('telegraf');
 const session = require('telegraf/session');
 const sp = require('synchronized-promise');
 const bot = new Telegraf(process.env.BOT_TOKEN);
+var A;
 bot.telegram.getMe().then((botInfo) => {
   bot.options.username = botInfo.username
   console.log("username: " + botInfo.username);
@@ -11,10 +12,14 @@ bot.use(session());
 
 
 
+function cut(toRemove,string){
+  var ret = string.replace(toRemove,'');
+  return ret;
+}
 
-function getUserMsgToBotId(context){
+function getUserMsg(context){
 
-  return JSON.stringify(context.message.message_id);
+  return JSON.stringify(context.message.text);
 
 }
 
@@ -41,10 +46,16 @@ bot.hears('Sei tu un bug ', (ctx) => {
 
 });
 
-bot.hears('ciao', (ctx) => {
-
+bot.hears('buildnote', (ctx) => {
+  ctx.reply(A);
 
   //ctx.reply('DEVO MORIRE! '+ getUserMsgToBotId(ctx) );
+
+});
+bot.hears('@nunocodex', (ctx) => {
+
+
+  ctx.reply('prima o poi risponderà' );
 
 });
 
@@ -78,16 +89,15 @@ if (wasadmin){
 });
 });
 
-bot.command('addA', (ctx) => {
+bot.command('Setbuildnote', (ctx) => {  //* Precedentemente /addA *//
   if(ctx.session.wasadmin){
+
     ctx.reply('fatto!');
+    A = cut("/Setbuildnote ",getUserMsg(ctx));
+    console.log(cut("/Setbuildnote ",getUserMsg(ctx)));
   }else{
     ctx.reply('non hai i permessi!');
   }
-})
-
-bot.command('A', (ctx) => {
-  ctx.session.wasadmin = false;
 })
 
 bot.command('quit', (ctx) => {
