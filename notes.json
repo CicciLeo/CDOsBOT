@@ -1,0 +1,32 @@
+{
+  "notelist": [
+    "cleanflash",
+    "crowdin",
+    "donate",
+    "error7",
+    "f2fs",
+    "faq",
+    "gcam",
+    "hotspot5ghz",
+    "kernelkcal10",
+    "logcat",
+    "magisk",
+    "ota",
+    "proximityfix",
+    "recoverybackup",
+    "rules",
+    "screenrecord",
+    "securestartup",
+    "supportitalian",
+    "twrp",
+    "unlock",
+    "update",
+    "vbmeta",
+    "xda"
+  ],
+  "notedesc": [
+    "Anyone who has problems with the ROM after dirty flashing => Clean flash! \n This tutorial assumes you are running OrangeFox Recovery, which is highly recommended for lavender, as it is officially supported. \n 1. Go into recovery by holding Power button + Volume Up. \n 2. If coming from a ROM that is not PE, go to Manage Partitions- Format Data- Yes. After doing so, reboot into recovery. \n If you are coming from PE, wiping data is sufficient. \n 3. Wipe dalvik cache, cache and system. \n 4. Reboot to Recovery. \n 5. Flash ROM \n 6. Reboot to Recovery. \n 7. Flash latest Magisk zip. \n 8. Reboot to System. \n Disable Secure boot- When Secure Startup prompt shows, click NO!!!",
+    "test2",
+    "test3"
+  ]
+}
