@@ -49,20 +49,16 @@ function loadNotes() { //carica gli array del file JSON nei due array delle note
       var command = cut("/get ", getUserMsg(ctx));
       ctx.reply(notes_description[getNoteIDByName(command)]);
     });
-
   });
-
 }
 
-function cut(toRemove, string) {
+function cut(toRemove, string) {          //non è che può dare problemi?
   var ret = string.replace(toRemove, '');
   return ret;
 }
 
 function getUserMsg(context) {
-
   return context.message.text;
-
 }
 
 function from(context) {
@@ -73,25 +69,49 @@ function getChatID(context) {
   return context.chat.id;
 }
 
-bot.command('savenotes', (ctx) => {
+function isAdmin(user) {
+  return (user.status == "creator") || (user.status == "administrator");
+}
+
+/*bot.command('savenotes', (ctx) => {
   if (isAdmin) {
     saveNotes();
     ctx.reply("Notes has been saved");
   } else {
     ctx.reply("You dont have the permission to do that");
   }
-
+});*/
+bot.command('savenotes', (ctx) => {                             //ADD new permission check
+  bot.telegram.getChatMember(getChatID(ctx), from(ctx))
+    .then(function(user) {
+      if (isAdmin(user)) {
+        saveNotes();
+        ctx.reply("Notes have been saved");
+      } else {
+        ctx.reply("You dont have the permission to do that");
+      }
+    });
 });
 
-bot.command('loadnotes', (ctx) => {
+/*bot.command('loadnotes', (ctx) => {
   if (isAdmin) {
     loadNotes();
     ctx.reply("Notes has been loaded");
   } else {
     ctx.reply("You dont have the permission to do that");
   }
+});*/
+bot.command('loadnotes', (ctx) => {                             //ADD new permission check
+  bot.telegram.getChatMember(getChatID(ctx), from(ctx))
+    .then(function(user) {
+      if (isAdmin(user)) {
+        loadNotes();
+        ctx.reply("Notes have been loaded");
+      } else {
+        ctx.reply("You dont have the permission to do that");
+      }
+    });
 });
-
 
 
 
@@ -100,25 +120,38 @@ bot.hears('@Shiberal', (ctx) => {
 });
 
 
-function getNoteIDByName(name) {
+/*function getNoteIDByName(name) {
   for (var i = 0; i <= notes_list.length; i++) {
     if (name == notes_list[i]) {
       return i;
     }
   }
+}*/
+function getNoteIDByName(name) {
+  return notes_list.indexOf(name);
 }
 
 
-bot.command(notes_list, (ctx) => { //Funzione che si attiva ogni volta che un messaggio contiene il nome di una nota
+/*bot.command(notes_list, (ctx) => { //Funzione che si attiva ogni volta che un messaggio contiene il nome di una nota
   var nome_nota = cut("/", getUserMsg(ctx));
   ctx.reply(notes_description[getNoteIDByName(nome_nota)]);
+});*/
+bot.command( (ctx) => {                           //Replace old "bot.command(notes_list, ecc...)"
+  var command = cut("/ ", getUserMsg(ctx)).split(" ")[0];
+  var id_nota = getNoteIDByName(command);
+  if(id_nota != -1) {
+    ctx.reply(notes_description[id_nota]);
+  } else {
+      console.log("Nota non trovata");
+  }
 });
+
 
 bot.command('notes', (ctx) => {
   ctx.reply("List of notes of CleanDroidOS\n" + notes_list.join("\n"));
 });
 
-bot.command('set', (ctx) => { // EX ADDNOTE NOW SET
+/*bot.command('set', (ctx) => { // EX ADDNOTE NOW SET
   if (isAdmin) {
     var new_note = cut("/set ", getUserMsg(ctx)).split(" ");
     if (notes_list.indexOf(new_note[0]) != -1) {
@@ -133,17 +166,43 @@ bot.command('set', (ctx) => { // EX ADDNOTE NOW SET
   }
 
   ctx.reply("List of notes of CleanDroidOS\n" + notes_list.join("\n"));
+});*/
+bot.command('set', (ctx) => {
+  bot.telegram.getChatMember(getChatID(ctx), from(ctx))
+    .then(function(user) {
+      if (isAdmin(user)) {
+        var new_note = cut("/set ", getUserMsg(ctx));           //stringa che contiene sia il nome della nota sia il contenuto
+        var new_note_name = new_note.split(" ")[0];
+        var new_note_description = cut(new_note_name + " ", new_note);
+        var index = getNoteIDByName(new_note_name);
+        if (index != -1) {
+          //salvare la nota alla posizione index
+          notes_description[index] = new_note_description;
+        } else {
+          notes_list.push(new_note_name);
+          notes_description.push(new_note_description);
+        }
+        saveNotes();
+        ctx.reply("Note has been saved");
+      } else {
+        ctx.reply("You dont have the permission to do that");
+      }
+    });
 });
-
 
 
 bot.command("get", (ctx) => {
   var command = cut("/get ", getUserMsg(ctx));
-  ctx.reply(notes_description[getNoteIDByName(command)]);
+  var id_nota = getNoteIDByName(command);
+  if(id_nota != -1) {
+    ctx.reply(notes_description[id_nota]);
+  } else {
+      console.log("Nota non trovata");
+  }
 });
 
 
-bot.command((ctx) => {
+/*bot.command((ctx) => {
   bot.telegram.getChatMember(getChatID(ctx), from(ctx))
     .then(function(data) {
       //ctx.reply("---DEBUG-DATA---\n"+data+"\n---DEBUG-DATA.status---\n"+ data.status);
@@ -156,7 +215,7 @@ bot.command((ctx) => {
     });
 
 
-});
+});*/
 
 
 
